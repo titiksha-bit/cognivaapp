@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cogniva — Your Complete Health, Powered by AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #040b14;
+    --surface: #0a1628;
+    --surface2: #0f1e35;
+    --surface3: #162540;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(99,179,255,0.15);
+    --teal: #00d4aa;
+    --teal2: #00b896;
+    --blue: #3b8cff;
+    --blue2: #6ab4ff;
+    --rose: #ff5c8a;
+    --amber: #ffb347;
+    --violet: #a78bfa;
+    --text: #f0f4ff;
+    --text2: #8fa8cc;
+    --text3: #4e6a8c;
+    --radius: 18px;
+    --radius-sm: 10px;
+    --glow-teal: 0 0 30px rgba(0,212,170,0.18);
+    --glow-blue: 0 0 30px rgba(59,140,255,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LAYOUT ── */
+  .app-shell { display: flex; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 80px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    gap: 6px;
+  }
+
+  .sidebar-logo {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    box-shadow: var(--glow-teal);
+    cursor: pointer;
+  }
+
+  .nav-item {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all .22s ease;
+    color: var(--text3);
+    position: relative;
+    border: 1px solid transparent;
+  }
+  .nav-item svg { width: 20px; height: 20px; stroke-width: 1.8; }
+  .nav-item span { font-size: 9px; font-weight: 500; letter-spacing: .3px; }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text2); }
+  .nav-item.active {
+    background: linear-gradient(135deg, rgba(0,212,170,.18), rgba(59,140,255,.14));
+    color: var(--teal);
+    border-color: rgba(0,212,170,.25);
+  }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: 30%; bottom: 30%;
+    width: 3px;
+    background: var(--teal);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .nav-emergency {
+    margin-top: auto;
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ff2d55, #ff5c8a);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all .22s;
+    color: #fff;
+    border: 1px solid rgba(255,45,85,.4);
+    box-shadow: 0 0 20px rgba(255,45,85,.3);
+    animation: pulse-emergency 2.5s infinite;
+  }
+  .nav-emergency svg { width: 20px; height: 20px; }
+  .nav-emergency span { font-size: 9px; font-weight: 600; }
+
+  @keyframes pulse-emergency {
+    0%,100% { box-shadow: 0 0 20px rgba(255,45,85,.3); }
+    50% { box-shadow: 0 0 35px rgba(255,45,85,.6); }
+  }
+
+  /* ── MAIN ── */
+  .main { margin-left: 80px; flex: 1; display: flex; flex-direction: column; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex; align-items: center; gap: 16px;
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(20px);
+  }
+
+  .topbar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--teal), var(--blue2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .topbar-search {
+    flex: 1; max-width: 400px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text2);
+    font-size: 14px;
+    margin-left: auto;
+    transition: border .2s;
+  }
+  .topbar-search:hover { border-color: var(--border2); }
+  .topbar-search input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; flex: 1;
+  }
+  .topbar-search input::placeholder { color: var(--text3); }
+  .topbar-search svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .topbar-actions { display: flex; align-items: center; gap: 12px; }
+
+  .avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 14px; color: #fff;
+    cursor: pointer;
+    border: 2px solid rgba(0,212,170,.3);
+  }
+
+  .notif-btn {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text2);
+    position: relative;
+    transition: all .2s;
+  }
+  .notif-btn:hover { border-color: var(--border2); color: var(--teal); }
+  .notif-btn svg { width: 18px; height: 18px; }
+  .notif-dot {
+    position: absolute; top: 7px; right: 7px;
+    width: 7px; height: 7px;
+    background: var(--rose);
+    border-radius: 50%;
+    border: 1.5px solid var(--surface);
+  }
+
+  /* ── CONTENT ── */
+  .content { padding: 32px; display: flex; flex-direction: column; gap: 28px; }
+
+  /* ── SECTIONS ── */
+  .section { display: none; }
+  .section.active { display: flex; flex-direction: column; gap: 24px; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: border .2s;
+  }
+  .card:hover { border-color: var(--border2); }
+
+  .card-sm { padding: 18px; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  /* ── SECTION HEADER ── */
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--text);
+  }
+  .section-sub { font-size: 14px; color: var(--text3); margin-top: 4px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; border: none;
+    transition: all .2s;
+  }
+  .btn svg { width: 15px; height: 15px; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(0,212,170,.22);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,212,170,.35); }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ── DASHBOARD ── */
+  .hero-greeting {
+    background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-greeting::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(0,212,170,.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-greeting::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: 150px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(59,140,255,.10) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .greeting-label { font-size: 13px; color: var(--teal); font-weight: 500; letter-spacing: .5px; text-transform: uppercase; }
+  .greeting-name { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; margin-top: 6px; }
+  .greeting-sub { font-size: 15px; color: var(--text2); margin-top: 8px; }
+
+  .health-score {
+    position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+    text-align: center;
+  }
+  .score-ring {
+    width: 90px; height: 90px;
+    position: relative;
+  }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .ring-bg { fill: none; stroke: var(--surface3); stroke-width: 6; }
+  .score-ring .ring-fill { fill: none; stroke: url(#scoreGrad); stroke-width: 6; stroke-linecap: round; stroke-dasharray: 251; stroke-dashoffset: 50; }
+  .score-num {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+    color: var(--teal);
+  }
+  .score-label { font-size: 11px; color: var(--text3); margin-top: 6px; font-weight: 500; }
+
+  /* ── STAT CARDS ── */
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: flex; flex-direction: column; gap: 12px;
+    cursor: pointer;
+    transition: all .22s;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent-color, var(--teal));
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .stat-card:hover::before { opacity: 1; }
+
+  .stat-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .stat-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--text); }
+  .stat-unit { font-size: 14px; color: var(--text3); font-weight: 400; }
+  .stat-label { font-size: 13px; color: var(--text2); }
+  .stat-change { font-size: 12px; font-weight: 500; }
+  .stat-change.up { color: var(--teal); }
+  .stat-change.down { color: var(--rose); }
+
+  /* ── AI ASSISTANT ── */
+  .ai-chat-window {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; flex-direction: column;
+    height: 520px;
+    overflow: hidden;
+  }
+
+  .ai-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface2);
+  }
+  .ai-avatar {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    animation: ai-breathe 3s ease-in-out infinite;
+  }
+  @keyframes ai-breathe {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,212,170,.3); }
+    50% { box-shadow: 0 0 0 8px rgba(0,212,170,0); }
+  }
+
+  .ai-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--teal); }
+  .ai-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); animation: blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+
+  .ai-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .ai-messages::-webkit-scrollbar { width: 4px; }
+  .ai-messages::-webkit-scrollbar-track { background: transparent; }
+  .ai-messages::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+  .msg { display: flex; gap: 10px; max-width: 85%; }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .msg-bubble {
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .msg.ai .msg-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); border-radius: 4px 14px 14px 14px; }
+  .msg.user .msg-bubble { background: linear-gradient(135deg, var(--teal2), var(--blue)); color: #fff; border-radius: 14px 4px 14px 14px; }
+
+  .msg-icon { width: 32px; height: 32px; border-radius: 10px; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+
+  .ai-input-area {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: center;
+  }
+  .ai-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border .2s;
+  }
+  .ai-input:focus { border-color: var(--teal); }
+  .ai-input::placeholder { color: var(--text3); }
+  .ai-send {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--teal), var(--blue));
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    transition: all .2s;
+  }
+  .ai-send:hover { transform: scale(1.05); box-shadow: var(--glow-teal); }
+  .ai-send svg { width: 18px; height: 18px; }
+
+  /* ── QUICK CHIPS ── */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 20px 12px; }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 12px; color: var(--text2);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .chip:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ── REMINDERS ── */
+  .reminder-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: all .2s;
+  }
+  .reminder-item:hover { border-color: var(--border2); }
+  .reminder-time {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    color: var(--teal);
+    white-space: nowrap;
+    min-width: 60px;
+  }
+  .reminder-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .reminder-label { font-size: 15px; font-weight: 500; }
+  .reminder-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .reminder-badge {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .badge-teal { background: rgba(0,212,170,.12); color: var(--teal); }
+  .badge-amber { background: rgba(255,179,71,.12); color: var(--amber); }
+  .badge-rose { background: rgba(255,92,138,.12); color: var(--rose); }
+  .badge-violet { background: rgba(167,139,250,.12); color: var(--violet); }
+
+  .add-reminder-btn {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    color: var(--text3);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .add-reminder-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ── SCAN / REPORTS ── */
+  .scan-drop {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 60px 40px;
+    text-align: center;
+    transition: all .3s;
+    cursor: pointer;
+    background: var(--surface2);
+    position: relative;
+    overflow: hidden;
+  }
+  .scan-drop::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, rgba(0,212,170,.04) 0%, transparent 70%);
+  }
+  .scan-drop:hover { border-color: var(--teal); background: rgba(0,212,170,.04); }
+  .scan-drop-icon { font-size: 52px; margin-bottom: 16px; }
+  .scan-drop h3 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--text); }
+  .scan-drop p { font-size: 14px; color: var(--text3); margin-top: 8px; }
+  .scan-drop .btn { margin: 20px auto 0; display: inline-flex; }
+
+  .report-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .report-card:hover { border-color: var(--border2); transform: translateX(4px); }
+  .report-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .report-name { font-size: 15px; font-weight: 600; }
+  .report-meta { font-size: 12px; color: var(--text3); margin-top: 3px; }
+  .report-actions { margin-left: auto; display: flex; gap: 8px; }
+  .icon-btn { width: 34px; height: 34px; border-radius: 8px; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); transition: all .2s; }
+  .icon-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .icon-btn svg { width: 15px; height: 15px; }
+
+  /* ── HEALTH PLAN ── */
+  .plan-day {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .plan-day-header {
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface3);
+    border-bottom: 1px solid var(--border);
+  }
+  .plan-day-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .plan-day-progress { font-size: 12px; color: var(--text3); }
+  .plan-tasks { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .plan-task {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    transition: background .2s;
+    cursor: pointer;
+  }
+  .plan-task:hover { background: var(--surface3); }
+  .plan-task-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all .2s;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .plan-task-check.done { background: var(--teal); border-color: var(--teal); color: #fff; }
+  .plan-task-label { font-size: 14px; flex: 1; }
+  .plan-task-label.done { text-decoration: line-through; color: var(--text3); }
+  .plan-task-tag { font-size: 11px; padding: 3px 8px; border-radius: 6px; }
+
+  .progress-bar { height: 4px; background: var(--surface3); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--teal), var(--blue)); transition: width .5s ease; }
+
+  /* ── REELS ── */
+  .reels-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .reel-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all .25s;
+    position: relative;
+  }
+  .reel-card:hover { border-color: var(--teal); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+
+  .reel-thumb {
+    height: 280px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .reel-thumb-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .reel-thumb-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.2) 50%, transparent 100%); }
+  .reel-play {
+    position: relative; z-index: 2;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+    color: #fff;
+  }
+  .reel-card:hover .reel-play { background: var(--teal); border-color: var(--teal); transform: scale(1.1); }
+  .reel-play svg { width: 22px; height: 22px; margin-left: 2px; }
+
+  .reel-category {
+    position: absolute; top: 12px; left: 12px; z-index: 3;
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    backdrop-filter: blur(8px);
+  }
+
+  .reel-info { padding: 14px 16px 16px; }
+  .reel-title { font-size: 14px; font-weight: 600; line-height: 1.4; }
+  .reel-meta { display: flex; align-items: center; gap: 12px; margin-top: 8px; font-size: 12px; color: var(--text3); }
+  .reel-doc { font-weight: 500; color: var(--text2); }
+  .reel-stats { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .reel-like, .reel-share { display: flex; align-items: center; gap: 4px; cursor: pointer; transition: color .2s; }
+  .reel-like:hover { color: var(--rose); }
+  .reel-share:hover { color: var(--teal); }
+  .reel-like svg, .reel-share svg { width: 14px; height: 14px; }
+
+  /* ── STUDENT ZONE ── */
+  .student-hero {
+    background: linear-gradient(135deg, rgba(167,139,250,.1), rgba(59,140,255,.1));
+    border: 1px solid rgba(167,139,250,.2);
+    border-radius: var(--radius);
+    padding: 32px;
+    position: relative; overflow: hidden;
+  }
+  .student-hero::before {
+    content: '';
+    position: absolute; top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(167,139,250,.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .student-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 20px;
+    background: rgba(167,139,250,.15); border: 1px solid rgba(167,139,250,.3);
+    font-size: 12px; font-weight: 600; color: var(--violet);
+    margin-bottom: 16px;
+  }
+
+  .case-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all .22s;
+    position: relative;
+    overflow: hidden;
+  }
+  .case-card:hover { border-color: rgba(167,139,250,.3); transform: translateY(-2px); }
+  .case-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--case-color, var(--violet));
+    border-radius: 0 3px 3px 0;
+  }
+
+  .case-anon { font-size: 11px; color: var(--text3); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+  .case-anon svg { width: 12px; height: 12px; }
+  .case-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .case-desc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+  .case-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .case-tag { padding: 3px 10px; border-radius: 6px; background: var(--surface3); font-size: 11px; color: var(--text3); }
+  .case-footer { display: flex; align-items: center; gap: 12px; margin-top: 14px; font-size: 12px; color: var(--text3); }
+  .case-difficulty { font-weight: 600; }
+  .case-difficulty.easy { color: var(--teal); }
+  .case-difficulty.medium { color: var(--amber); }
+  .case-difficulty.hard { color: var(--rose); }
+
+  /* ── EMERGENCY ── */
+  .emergency-hero {
+    background: linear-gradient(135deg, rgba(255,45,85,.12), rgba(255,92,138,.08));
+    border: 1px solid rgba(255,45,85,.3);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .emergency-hero::before {
+    content: '🚨';
+    position: absolute; top: -10px; right: 20px;
+    font-size: 100px; opacity: .06;
+  }
+
+  .emergency-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+  .emergency-sub { font-size: 15px; color: rgba(255,255,255,.6); margin-bottom: 28px; }
+
+  .emergency-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .emg-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 20px 32px;
+    border-radius: 16px;
+    border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600;
+    transition: all .22s;
+    min-width: 160px;
+  }
+  .emg-btn svg { width: 28px; height: 28px; }
+  .emg-btn-red { background: linear-gradient(135deg, #ff2d55, #c0002a); color: #fff; box-shadow: 0 8px 28px rgba(255,45,85,.4); }
+  .emg-btn-red:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(255,45,85,.6); }
+  .emg-btn-blue { background: linear-gradient(135deg, var(--blue), #1a5ccc); color: #fff; box-shadow: 0 8px 28px rgba(59,140,255,.3); }
+  .emg-btn-blue:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(59,140,255,.5); }
+
+  .hospital-card {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: all .2s;
+  }
+  .hospital-card:hover { border-color: rgba(255,45,85,.3); }
+  .hospital-map-icon { width: 48px; height: 48px; border-radius: 14px; background: rgba(255,45,85,.1); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .hospital-name { font-size: 15px; font-weight: 600; }
+  .hospital-addr { font-size: 12px; color: var(--text3); margin-top: 3px; }
+  .hospital-dist { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--teal); }
+  .hospital-call {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: rgba(255,45,85,.1);
+    border: 1px solid rgba(255,45,85,.25);
+    color: var(--rose);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .hospital-call:hover { background: rgba(255,45,85,.2); }
+  .hospital-call svg { width: 14px; height: 14px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.75);
+    backdrop-filter: blur(6px);
+    z-index: 999;
+    display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn .2s; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 32px;
+    width: 90%; max-width: 480px;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px;
+    border-radius: 8px; background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text2);
+    font-size: 16px;
+  }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 13px; color: var(--text2); margin-bottom: 6px; display: block; }
+  .form-input {
+    width: 100%; padding: 11px 14px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+    transition: border .2s;
+  }
+  .form-input:focus { border-color: var(--teal); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── SCROLLBARS ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+  /* ── INLINE SVG ICONS ── */
+  .icon { display: inline-flex; align-items: center; justify-content: center; }
+
+  /* ── MINI CHART ── */
+  .mini-chart { height: 50px; display: flex; align-items: flex-end; gap: 3px; }
+  .mini-bar { flex: 1; border-radius: 3px 3px 0 0; background: rgba(0,212,170,.25); transition: background .2s; }
+  .mini-bar:hover { background: rgba(0,212,170,.55); }
+  .mini-bar.today { background: linear-gradient(to top, var(--teal), var(--blue2)); }
+
+  /* RESPONSIVE helpers */
+  @media (max-width: 1000px) {
+    .grid-4 { grid-template-columns: repeat(2,1fr); }
+    .grid-3 { grid-template-columns: repeat(2,1fr); }
+    .reels-container { grid-template-columns: repeat(2,1fr); }
+  }
+  @media (max-width: 680px) {
+    .grid-2, .grid-3, .grid-4, .reels-container { grid-template-columns: 1fr; }
+    .health-score { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">C</div>
+
+    <div class="nav-item active" onclick="showSection('dashboard',this)" title="Dashboard">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Home</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('ai',this)" title="AI Assistant">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"/><path d="M9 13H7a5 5 0 0 0-5 5v2h20v-2a5 5 0 0 0-5-5h-2"/><circle cx="12" cy="9" r="1"/></svg>
+      <span>AI</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('reminders',this)" title="Reminders">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span>Alerts</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('scan',this)" title="Scan Reports">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Scan</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('plan',this)" title="Health Plan">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Plan</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('reels',this)" title="Health Reels">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      <span>Reels</span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('students',this)" title="Student Zone">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <span>Study</span>
+    </div>
+
+    <div class="nav-emergency" onclick="showSection('emergency',document.querySelector('[title=Emergency]'))" title="Emergency">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>SOS</span>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title">Cogniva</div>
+      <div class="topbar-search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search symptoms, medications, doctors…">
+      </div>
+      <div class="topbar-actions">
+        <div class="notif-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="avatar">RK</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ════ DASHBOARD ════ -->
+      <div class="section active" id="dashboard">
+
+        <div class="hero-greeting">
+          <div class="greeting-label">Good Morning</div>
+          <div class="greeting-name">Rahul Khanna 👋</div>
+          <div class="greeting-sub">Your health score is looking great today. Keep it up!</div>
+          <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="showSection('ai',null)">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Ask AI
+            </button>
+            <button class="btn btn-ghost" onclick="showSection('emergency',null)">
+              🚨 Emergency
+            </button>
+          </div>
+
+          <div class="health-score">
+            <div class="score-ring">
+              <svg width="90" height="90" viewBox="0 0 90 90">
+                <defs>
+                  <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#00d4aa"/>
+                    <stop offset="100%" stop-color="#3b8cff"/>
+                  </linearGradient>
+                </defs>
+                <circle class="ring-bg" cx="45" cy="45" r="40"/>
+                <circle class="ring-fill" cx="45" cy="45" r="40"/>
+              </svg>
+              <div class="score-num">84</div>
+            </div>
+            <div class="score-label">Health Score</div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid-4">
+          <div class="stat-card" style="--accent-color:#00d4aa">
+            <div class="stat-icon" style="background:rgba(0,212,170,.1)">❤️</div>
+            <div><span class="stat-val">72</span> <span class="stat-unit">bpm</span></div>
+            <div class="stat-label">Heart Rate</div>
+            <div class="mini-chart">
+              <div class="mini-bar" style="height:40%"></div><div class="mini-bar" style="height:60%"></div><div class="mini-bar" style="height:45%"></div><div class="mini-bar" style="height:75%"></div><div class="mini-bar" style="height:55%"></div><div class="mini-bar today" style="height:65%"></div>
+            </div>
+            <div class="stat-change up">↑ 3 bpm from yesterday</div>
+          </div>
+
+          <div class="stat-card" style="--accent-color:#3b8cff">
+            <div class="stat-icon" style="background:rgba(59,140,255,.1)">💧</div>
+            <div><span class="stat-val">1.8</span> <span class="stat-unit">L</span></div>
+            <div class="stat-label">Hydration</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:72%;background:linear-gradient(90deg,#3b8cff,#6ab4ff)"></div></div>
+            <div class="stat-change up">72% of daily goal</div>
+          </div>
+
+          <div class="stat-card" style="--accent-color:#ffb347">
+            <div class="stat-icon" style="background:rgba(255,179,71,.1)">🔥</div>
+            <div><span class="stat-val">2,140</span> <span class="stat-unit">kcal</span></div>
+            <div class="stat-label">Calories Burned</div>
+            <div class="mini-chart">
+              <div class="mini-bar" style="height:50%;background:rgba(255,179,71,.25)"></div><div class="mini-bar" style="height:70%;background:rgba(255,179,71,.25)"></div><div class="mini-bar" style="height:55%;background:rgba(255,179,71,.25)"></div><div class="mini-bar" style="height:85%;background:rgba(255,179,71,.25)"></div><div class="mini-bar" style="height:65%;background:rgba(255,179,71,.25)"></div><div class="mini-bar today" style="height:75%;background:linear-gradient(to top,#ffb347,#ffda85)"></div>
+            </div>
+            <div class="stat-change up">↑ 340 kcal above target</div>
+          </div>
+
+          <div class="stat-card" style="--accent-color:#a78bfa">
+            <div class="stat-icon" style="background:rgba(167,139,250,.1)">😴</div>
+            <div><span class="stat-val">7.2</span> <span class="stat-unit">hrs</span></div>
+            <div class="stat-label">Sleep Duration</div>
+            <div class="mini-chart">
+              <div class="mini-bar" style="height:65%;background:rgba(167,139,250,.25)"></div><div class="mini-bar" style="height:80%;background:rgba(167,139,250,.25)"></div><div class="mini-bar" style="height:55%;background:rgba(167,139,250,.25)"></div><div class="mini-bar" style="height:70%;background:rgba(167,139,250,.25)"></div><div class="mini-bar" style="height:90%;background:rgba(167,139,250,.25)"></div><div class="mini-bar today" style="height:75%;background:linear-gradient(to top,#a78bfa,#c4b5fd)"></div>
+            </div>
+            <div class="stat-change down">↓ 0.8 hrs below target</div>
+          </div>
+        </div>
+
+        <!-- Upcoming + Reminders Row -->
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-header">
+              <div class="section-title" style="font-size:17px">Upcoming</div>
+              <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px">View all</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+              <div class="reminder-item">
+                <div class="reminder-time">09:00</div>
+                <div class="reminder-icon" style="background:rgba(0,212,170,.1)">💊</div>
+                <div><div class="reminder-label">Metformin 500mg</div><div class="reminder-sub">After breakfast</div></div>
+                <div class="reminder-badge badge-teal">Today</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">14:30</div>
+                <div class="reminder-icon" style="background:rgba(59,140,255,.1)">👨‍⚕️</div>
+                <div><div class="reminder-label">Dr. Sharma — Cardiology</div><div class="reminder-sub">Apollo Hospital</div></div>
+                <div class="reminder-badge badge-amber">2h 15m</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">20:00</div>
+                <div class="reminder-icon" style="background:rgba(167,139,250,.1)">🧘</div>
+                <div><div class="reminder-label">Evening Meditation</div><div class="reminder-sub">20 minutes</div></div>
+                <div class="reminder-badge badge-violet">Tonight</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-header">
+              <div class="section-title" style="font-size:17px">AI Insights</div>
+              <span style="font-size:12px;color:var(--teal);font-weight:500;cursor:pointer">Powered by Cogniva AI</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+              <div style="padding:14px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.15);border-radius:12px;">
+                <div style="font-size:13px;color:var(--teal);font-weight:600;margin-bottom:6px">🧠 Pattern Detected</div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5">Your BP tends to spike on Monday mornings. Consider a 10-min walk before work.</div>
+              </div>
+              <div style="padding:14px;background:rgba(59,140,255,.06);border:1px solid rgba(59,140,255,.15);border-radius:12px;">
+                <div style="font-size:13px;color:var(--blue2);font-weight:600;margin-bottom:6px">💧 Hydration Alert</div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5">You need 700ml more water today. Hot weather detected in your area.</div>
+              </div>
+              <div style="padding:14px;background:rgba(255,179,71,.06);border:1px solid rgba(255,179,71,.15);border-radius:12px;">
+                <div style="font-size:13px;color:var(--amber);font-weight:600;margin-bottom:6px">⚠️ Medication Due</div>
+                <div style="font-size:13px;color:var(--text2);line-height:1.5">Metformin refill needed in 4 days. Shall I locate the nearest pharmacy?</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ════ AI ASSISTANT ════ -->
+      <div class="section" id="ai">
+        <div>
+          <div class="section-title">AI Health Assistant</div>
+          <div class="section-sub">Your personal medical AI — ask symptoms, medications, diet, or anything health-related</div>
+        </div>
+
+        <div class="grid-2" style="align-items:start">
+          <div class="ai-chat-window">
+            <div class="ai-header">
+              <div class="ai-avatar">🤖</div>
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px">Cogniva AI</div>
+                <div class="ai-status"><div class="ai-dot"></div> Online · Medical AI</div>
+              </div>
+              <div style="margin-left:auto;font-size:12px;color:var(--text3)">Not a substitute<br>for real doctors</div>
+            </div>
+
+            <div class="ai-messages" id="chatMessages">
+              <div class="msg ai">
+                <div class="msg-icon">🤖</div>
+                <div class="msg-bubble">Hello Rahul! I'm your Cogniva AI health assistant. I can help you understand symptoms, check drug interactions, review your lab results, or answer any health questions. How are you feeling today?</div>
+              </div>
+              <div class="msg user">
+                <div class="msg-icon">👤</div>
+                <div class="msg-bubble">I've been having mild chest tightness in the mornings. Should I be worried?</div>
+              </div>
+              <div class="msg ai">
+                <div class="msg-icon">🤖</div>
+                <div class="msg-bubble">Morning chest tightness can have several causes. Given your cardiac history, I'd recommend: <br><br>1. Monitor if it occurs during exertion or at rest<br>2. Note any shortness of breath, sweating, or arm pain<br>3. Check your BP log — I see elevated readings on Monday mornings<br><br>⚠️ Please consult Dr. Sharma at your 2:30 PM appointment today and mention this specifically.</div>
+              </div>
+            </div>
+
+            <div class="chips">
+              <div class="chip" onclick="sendChip('Check my medications')">💊 My Medications</div>
+              <div class="chip" onclick="sendChip('Analyze my last report')">📋 Last Report</div>
+              <div class="chip" onclick="sendChip('Suggest a diet plan')">🥗 Diet Plan</div>
+              <div class="chip" onclick="sendChip('What are my vitals?')">❤️ My Vitals</div>
+            </div>
+
+            <div class="ai-input-area">
+              <input class="ai-input" id="chatInput" placeholder="Type your health question…" onkeydown="if(event.key==='Enter')sendMessage()">
+              <button class="ai-send" onclick="sendMessage()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px">What can I help with?</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:12px;cursor:pointer" onclick="sendChip('Explain my blood pressure readings')">
+                  <div style="width:36px;height:36px;border-radius:10px;background:rgba(0,212,170,.1);display:flex;align-items:center;justify-content:center;font-size:18px">🩺</div>
+                  <div>
+                    <div style="font-size:14px;font-weight:500">Symptom Analysis</div>
+                    <div style="font-size:12px;color:var(--text3)">Describe symptoms for AI triage</div>
+                  </div>
+                  <div style="margin-left:auto;font-size:18px;color:var(--text3)">›</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:12px;cursor:pointer" onclick="sendChip('Check drug interactions for my medications')">
+                  <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,179,71,.1);display:flex;align-items:center;justify-content:center;font-size:18px">💊</div>
+                  <div>
+                    <div style="font-size:14px;font-weight:500">Drug Interactions</div>
+                    <div style="font-size:12px;color:var(--text3)">Check medication compatibility</div>
+                  </div>
+                  <div style="margin-left:auto;font-size:18px;color:var(--text3)">›</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:12px;cursor:pointer" onclick="sendChip('Explain my CBC report values')">
+                  <div style="width:36px;height:36px;border-radius:10px;background:rgba(59,140,255,.1);display:flex;align-items:center;justify-content:center;font-size:18px">📊</div>
+                  <div>
+                    <div style="font-size:14px;font-weight:500">Report Interpretation</div>
+                    <div style="font-size:12px;color:var(--text3)">Understand lab values in plain language</div>
+                  </div>
+                  <div style="margin-left:auto;font-size:18px;color:var(--text3)">›</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface2);border-radius:12px;cursor:pointer" onclick="sendChip('Create a diabetic diet plan for me')">
+                  <div style="width:36px;height:36px;border-radius:10px;background:rgba(167,139,250,.1);display:flex;align-items:center;justify-content:center;font-size:18px">🥗</div>
+                  <div>
+                    <div style="font-size:14px;font-weight:500">Nutrition Guidance</div>
+                    <div style="font-size:12px;color:var(--text3)">Personalized diet recommendations</div>
+                  </div>
+                  <div style="margin-left:auto;font-size:18px;color:var(--text3)">›</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="background:rgba(255,92,138,.05);border-color:rgba(255,92,138,.15)">
+              <div style="font-size:12px;color:var(--rose);font-weight:600;margin-bottom:8px">⚠️ DISCLAIMER</div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.55">Cogniva AI provides health information for educational purposes only. Always consult a qualified medical professional for diagnosis and treatment.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ REMINDERS ════ -->
+      <div class="section" id="reminders">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Reminders & Medications</div>
+            <div class="section-sub">Track your medications, appointments & wellness routines</div>
+          </div>
+          <button class="btn btn-primary" onclick="document.getElementById('addReminderModal').classList.add('open')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Reminder
+          </button>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div style="font-size:13px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Today · May 10</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div class="reminder-item">
+                <div class="reminder-time">08:00</div>
+                <div class="reminder-icon" style="background:rgba(0,212,170,.1)">💊</div>
+                <div><div class="reminder-label">Metformin 500mg</div><div class="reminder-sub">With breakfast · Type 2 Diabetes</div></div>
+                <div class="reminder-badge badge-teal">✓ Done</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">09:30</div>
+                <div class="reminder-icon" style="background:rgba(255,179,71,.1)">🧪</div>
+                <div><div class="reminder-label">Blood Glucose Check</div><div class="reminder-sub">Fasting glucose measurement</div></div>
+                <div class="reminder-badge badge-teal">✓ Done</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">13:00</div>
+                <div class="reminder-icon" style="background:rgba(59,140,255,.1)">💊</div>
+                <div><div class="reminder-label">Amlodipine 5mg</div><div class="reminder-sub">After lunch · Hypertension</div></div>
+                <div class="reminder-badge badge-amber">Upcoming</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">14:30</div>
+                <div class="reminder-icon" style="background:rgba(59,140,255,.1)">👨‍⚕️</div>
+                <div><div class="reminder-label">Dr. Sharma — Cardiology</div><div class="reminder-sub">Apollo Hospital, New Delhi</div></div>
+                <div class="reminder-badge badge-amber">In 1h 15m</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">20:00</div>
+                <div class="reminder-icon" style="background:rgba(167,139,250,.1)">🧘</div>
+                <div><div class="reminder-label">Evening Meditation</div><div class="reminder-sub">20 minutes · Mindfulness</div></div>
+                <div class="reminder-badge badge-violet">Tonight</div>
+              </div>
+              <div class="reminder-item">
+                <div class="reminder-time">22:00</div>
+                <div class="reminder-icon" style="background:rgba(255,92,138,.1)">💊</div>
+                <div><div class="reminder-label">Rosuvastatin 10mg</div><div class="reminder-sub">Before sleep · Cholesterol</div></div>
+                <div class="reminder-badge badge-rose">Night</div>
+              </div>
+              <div class="add-reminder-btn" onclick="document.getElementById('addReminderModal').classList.add('open')">
+                <span style="font-size:20px">+</span> Add new reminder
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px">Today's Progress</div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--text2)">Medications taken</span><span style="color:var(--teal);font-weight:600">2 / 4</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--text2)">Reminders completed</span><span style="color:var(--blue2);font-weight:600">3 / 6</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:50%;background:linear-gradient(90deg,var(--blue),var(--blue2))"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px"><span style="color:var(--text2)">Streak</span><span style="color:var(--amber);font-weight:600">🔥 12 days</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:80%;background:linear-gradient(90deg,#ffb347,#ffda85)"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px">Weekly View</div>
+              <div style="display:flex;gap:6px;justify-content:space-between">
+                <div style="text-align:center;flex:1" id="weekdayMon">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">MON</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:14px">✓</div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">TUE</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:14px">✓</div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">WED</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:14px">✓</div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">THU</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,179,71,.2);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:12px;color:var(--amber)">~</div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">FRI</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,92,138,.15);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:14px;color:var(--rose)">✗</div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">SAT</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:14px">✓</div>
+                </div>
+                <div style="text-align:center;flex:1">
+                  <div style="font-size:10px;color:var(--teal);font-weight:700;margin-bottom:8px">SUN</div>
+                  <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:11px;font-weight:700;color:#fff">50%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ SCAN REPORTS ════ -->
+      <div class="section" id="scan">
+        <div>
+          <div class="section-title">Scan & Reports</div>
+          <div class="section-sub">Upload prescriptions, lab reports, or X-rays — AI reads and explains them instantly</div>
+        </div>
+
+        <div class="scan-drop" onclick="triggerFileUpload()">
+          <div class="scan-drop-icon">🔬</div>
+          <h3>Drop your medical report here</h3>
+          <p>Supports PDF, JPG, PNG — prescriptions, blood tests, X-ray reports, ECGs</p>
+          <button class="btn btn-primary">📎 Browse Files</button>
+          <input type="file" id="fileInput" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload(this)">
+        </div>
+
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:14px">Recent Reports</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="report-card">
+              <div class="report-icon" style="background:rgba(0,212,170,.1)">🩸</div>
+              <div>
+                <div class="report-name">Complete Blood Count (CBC)</div>
+                <div class="report-meta">Uploaded May 8, 2026 · Dr. Sharma · 3 flags found by AI</div>
+              </div>
+              <div class="report-actions">
+                <div class="icon-btn" title="View AI Analysis">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div class="icon-btn" title="Download">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <div class="report-icon" style="background:rgba(59,140,255,.1)">💓</div>
+              <div>
+                <div class="report-name">ECG Report — 12 Lead</div>
+                <div class="report-meta">Uploaded May 1, 2026 · Apollo Diagnostics · Normal sinus rhythm</div>
+              </div>
+              <div class="report-actions">
+                <div class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                <div class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <div class="report-icon" style="background:rgba(255,179,71,.1)">🫀</div>
+              <div>
+                <div class="report-name">Lipid Profile Panel</div>
+                <div class="report-meta">Uploaded Apr 20, 2026 · Thyrocare · LDL borderline high</div>
+              </div>
+              <div class="report-actions">
+                <div class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                <div class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <div class="report-icon" style="background:rgba(167,139,250,.1)">🦴</div>
+              <div>
+                <div class="report-name">Chest X-Ray PA View</div>
+                <div class="report-meta">Uploaded Apr 10, 2026 · Fortis Diagnostics · No abnormality detected</div>
+              </div>
+              <div class="report-actions">
+                <div class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+                <div class="icon-btn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ HEALTH PLAN ════ -->
+      <div class="section" id="plan">
+        <div class="section-header">
+          <div>
+            <div class="section-title">My Health Plan</div>
+            <div class="section-sub">AI-personalized weekly wellness program</div>
+          </div>
+          <button class="btn btn-primary">🤖 Regenerate with AI</button>
+        </div>
+
+        <div class="grid-2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="plan-day">
+              <div class="plan-day-header">
+                <div class="plan-day-title">Sunday, May 10 — Today</div>
+                <div class="plan-day-progress">4 / 6 done</div>
+              </div>
+              <div class="progress-bar" style="border-radius:0;height:3px"><div class="progress-fill" style="width:66%"></div></div>
+              <div class="plan-tasks">
+                <div class="plan-task" onclick="toggleTask(this)">
+                  <div class="plan-task-check done">✓</div>
+                  <div class="plan-task-label done">Morning glucose check (fasting)</div>
+                  <div class="plan-task-tag badge-teal">Diabetes</div>
+                </div>
+                <div class="plan-task" onclick="toggleTask(this)">
+                  <div class="plan-task-check done">✓</div>
+                  <div class="plan-task-label done">30-minute brisk walk</div>
+                  <div class="plan-task-tag badge-teal">Exercise</div>
+                </div>
+                <div class="plan-task" onclick="toggleTask(this)">
+                  <div class="plan-task-check done">✓</div>
+                  <div class="plan-task-label done">Metformin 500mg with breakfast</div>
+                  <div class="plan-task-tag badge-amber">Medication</div>
+                </div>
+                <div class="plan-task" onclick="toggleTask(this)">
+                  <div class="plan-task-check done">✓</div>
+                  <div class="plan-task-label done">Drink 2L water</div>
+                  <div class="plan-task-tag" style="background:rgba(59,140,255,.12);color:var(--blue2)">Hydration</div>
+                </div>
+                <div class="plan-task" onclick="toggleTask(this)">
+                  <div class="plan-task-check"></div>
+                  <div class="plan-task-label">Dr. Sharma appointment at 14:30</div>
+                  <div class="plan-task-tag badge-violet">Appointment</div>
+                </div>
+                <div class="plan-task" onclick="toggleTask(this)">
+                  <div class="plan-task-check"></div>
+                  <div class="plan-task-label">Evening meditation 20 mins</div>
+                  <div class="plan-task-tag badge-violet">Wellness</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="plan-day">
+              <div class="plan-day-header">
+                <div class="plan-day-title">Monday, May 11</div>
+                <div class="plan-day-progress">Upcoming</div>
+              </div>
+              <div class="plan-tasks">
+                <div class="plan-task"><div class="plan-task-check"></div><div class="plan-task-label">Morning BP check (high-risk day)</div><div class="plan-task-tag badge-rose">Critical</div></div>
+                <div class="plan-task"><div class="plan-task-check"></div><div class="plan-task-label">10-min walk before office</div><div class="plan-task-tag badge-teal">Exercise</div></div>
+                <div class="plan-task"><div class="plan-task-check"></div><div class="plan-task-label">Reduce salt intake — AI recommendation</div><div class="plan-task-tag badge-amber">Nutrition</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="card">
+              <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px">Weekly Summary</div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px"><span>Exercise goals</span><span style="color:var(--teal)">5/7 days</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:71%"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px"><span>Medication adherence</span><span style="color:var(--blue2)">90%</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:90%;background:linear-gradient(90deg,var(--blue),var(--blue2))"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px"><span>Hydration goal</span><span style="color:var(--amber)">64%</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:64%;background:linear-gradient(90deg,#ffb347,#ffda85)"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="background:linear-gradient(135deg,rgba(0,212,170,.06),rgba(59,140,255,.06));border-color:rgba(0,212,170,.15)">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+                <div style="font-size:24px">🤖</div>
+                <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700">AI Recommendation</div>
+              </div>
+              <div style="font-size:13px;color:var(--text2);line-height:1.6">Based on your last 3 weeks, I recommend adding <strong style="color:var(--teal)">yoga on Fridays</strong> to help with your stress-related BP spikes. Your glucose control is improving — excellent work on diet compliance!</div>
+              <button class="btn btn-primary" style="margin-top:14px;padding:8px 14px;font-size:13px">Apply to Plan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ REELS ════ -->
+      <div class="section" id="reels">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Health Reels</div>
+            <div class="section-sub">Educational health videos curated by verified doctors and specialists</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="btn btn-ghost">🎬 Upload Reel</button>
+            <button class="btn btn-primary">🔴 Live Now</button>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="chip" style="background:rgba(0,212,170,.12);border-color:rgba(0,212,170,.3);color:var(--teal)">All</div>
+          <div class="chip">❤️ Cardiology</div>
+          <div class="chip">🧠 Neurology</div>
+          <div class="chip">🍽️ Nutrition</div>
+          <div class="chip">🏃 Fitness</div>
+          <div class="chip">🧘 Mental Health</div>
+          <div class="chip">💊 Medications</div>
+          <div class="chip">🫁 Pulmonology</div>
+        </div>
+
+        <div class="reels-container">
+
+          <div class="reel-card">
+            <div class="reel-thumb" style="background:linear-gradient(135deg,#0f2544,#1a3a5c)">
+              <div class="reel-thumb-overlay"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.15">❤️</div>
+              <div class="reel-play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="reel-category" style="background:rgba(255,92,138,.2);color:#ff5c8a;border:1px solid rgba(255,92,138,.3)">❤️ Cardiology</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">5 Warning Signs of Heart Disease You Shouldn't Ignore</div>
+              <div class="reel-meta">
+                <span class="reel-doc">Dr. Priya Sharma, MD</span>
+                <div class="reel-stats">
+                  <div class="reel-like"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 2.4k</div>
+                  <div class="reel-share"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">📹 8 min · 18.2K views · Verified Doctor</div>
+            </div>
+          </div>
+
+          <div class="reel-card">
+            <div class="reel-thumb" style="background:linear-gradient(135deg,#0f2a1a,#1a4a2a)">
+              <div class="reel-thumb-overlay"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.15">🥗</div>
+              <div class="reel-play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="reel-category" style="background:rgba(0,212,170,.2);color:var(--teal);border:1px solid rgba(0,212,170,.3)">🍽️ Nutrition</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">Best Diabetic Diet: What to Eat & What to Avoid</div>
+              <div class="reel-meta">
+                <span class="reel-doc">Dr. Rohan Malhotra, Nutritionist</span>
+                <div class="reel-stats">
+                  <div class="reel-like"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 5.1k</div>
+                  <div class="reel-share"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">📹 12 min · 31.8K views · Verified Doctor</div>
+            </div>
+          </div>
+
+          <div class="reel-card">
+            <div class="reel-thumb" style="background:linear-gradient(135deg,#1a0f30,#2a1a50)">
+              <div class="reel-thumb-overlay"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.15">🧠</div>
+              <div class="reel-play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="reel-category" style="background:rgba(167,139,250,.2);color:var(--violet);border:1px solid rgba(167,139,250,.3)">🧠 Neurology</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">How Stress Impacts Blood Pressure — The Brain-Heart Link</div>
+              <div class="reel-meta">
+                <span class="reel-doc">Dr. Anita Kapoor, Neurologist</span>
+                <div class="reel-stats">
+                  <div class="reel-like"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 3.7k</div>
+                  <div class="reel-share"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">📹 15 min · 42.0K views · Verified Doctor</div>
+            </div>
+          </div>
+
+          <div class="reel-card">
+            <div class="reel-thumb" style="background:linear-gradient(135deg,#1f1400,#3a2800)">
+              <div class="reel-thumb-overlay"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.15">🏃</div>
+              <div class="reel-play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="reel-category" style="background:rgba(255,179,71,.2);color:var(--amber);border:1px solid rgba(255,179,71,.3)">🏃 Fitness</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">Exercise for Diabetics: Safe & Effective Routines</div>
+              <div class="reel-meta">
+                <span class="reel-doc">Dr. Vikram Singh, Sports Medicine</span>
+                <div class="reel-stats">
+                  <div class="reel-like"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 6.2k</div>
+                  <div class="reel-share"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">📹 10 min · 55.4K views · Verified Doctor</div>
+            </div>
+          </div>
+
+          <div class="reel-card">
+            <div class="reel-thumb" style="background:linear-gradient(135deg,#001a25,#003040)">
+              <div class="reel-thumb-overlay"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.15">🫁</div>
+              <div class="reel-play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="reel-category" style="background:rgba(59,140,255,.2);color:var(--blue2);border:1px solid rgba(59,140,255,.3)">🫁 Pulmonology</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">Understanding Asthma Triggers & Prevention</div>
+              <div class="reel-meta">
+                <span class="reel-doc">Dr. Meera Nair, Pulmonologist</span>
+                <div class="reel-stats">
+                  <div class="reel-like"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 4.0k</div>
+                  <div class="reel-share"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">📹 9 min · 28.1K views · Verified Doctor</div>
+            </div>
+          </div>
+
+          <div class="reel-card">
+            <div class="reel-thumb" style="background:linear-gradient(135deg,#1a0a0a,#3a1515)">
+              <div class="reel-thumb-overlay"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.15">🧘</div>
+              <div class="reel-play">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+              <div class="reel-category" style="background:rgba(255,92,138,.2);color:var(--rose);border:1px solid rgba(255,92,138,.3)">🧘 Mental Health</div>
+            </div>
+            <div class="reel-info">
+              <div class="reel-title">5-Minute Breathing Techniques for Anxiety Relief</div>
+              <div class="reel-meta">
+                <span class="reel-doc">Dr. Ayesha Khan, Psychiatrist</span>
+                <div class="reel-stats">
+                  <div class="reel-like"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 9.8k</div>
+                  <div class="reel-share"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:6px">📹 6 min · 78.3K views · Verified Doctor</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════ STUDENT ZONE ════ -->
+      <div class="section" id="students">
+        <div class="student-hero">
+          <div class="student-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Student Learning Zone
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:10px">Learn from Real Cases 📚</div>
+          <div style="font-size:15px;color:var(--text2);max-width:600px;line-height:1.6;margin-bottom:20px">
+            Cogniva provides anonymized real-world patient data for medical students. All personal identifiers are removed via differential privacy. Learn diagnostics, treatment patterns, and clinical reasoning from actual cases.
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="padding:12px 20px;border-radius:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);font-size:14px;font-weight:600;color:var(--violet)">🔒 100% Anonymized</div>
+            <div style="padding:12px 20px;border-radius:12px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.2);font-size:14px;font-weight:600;color:var(--teal)">✅ HIPAA Compliant</div>
+            <div style="padding:12px 20px;border-radius:12px;background:rgba(59,140,255,.1);border:1px solid rgba(59,140,255,.2);font-size:14px;font-weight:600;color:var(--blue2)">🎓 1,240 Cases Available</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:13px;color:var(--text3)">Filter:</span>
+          <div class="chip" style="background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.3);color:var(--violet)">All Cases</div>
+          <div class="chip">❤️ Cardiology</div>
+          <div class="chip">🧪 Endocrinology</div>
+          <div class="chip">🫁 Pulmonology</div>
+          <div class="chip">🧠 Neurology</div>
+          <div class="chip">🟢 Easy</div>
+          <div class="chip">🟡 Medium</div>
+          <div class="chip">🔴 Hard</div>
+        </div>
+
+        <div class="grid-3">
+
+          <div class="case-card" style="--case-color:#00d4aa">
+            <div class="case-anon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Patient ID: CGNV-2290 · 62M · Anonymized
+            </div>
+            <div class="case-title">Uncontrolled T2 Diabetes with Hypertension</div>
+            <div class="case-desc">Patient presents with HbA1c of 10.2% despite 3 medications. BP consistently above 150/95. Explore the challenges of polypharmacy and lifestyle barriers in elderly management.</div>
+            <div class="case-tags">
+              <div class="case-tag">Diabetes</div>
+              <div class="case-tag">Hypertension</div>
+              <div class="case-tag">Polypharmacy</div>
+              <div class="case-tag">Elderly</div>
+            </div>
+            <div class="case-footer">
+              <div class="case-difficulty hard">🔴 Hard</div>
+              <div>📊 24 data points</div>
+              <div>🎓 842 students</div>
+              <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;margin-left:auto">Study →</button>
+            </div>
+          </div>
+
+          <div class="case-card" style="--case-color:#3b8cff">
+            <div class="case-anon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Patient ID: CGNV-3314 · 45F · Anonymized
+            </div>
+            <div class="case-title">Post-MI Recovery with Depression Comorbidity</div>
+            <div class="case-desc">45-year-old female, 8 weeks post-STEMI. Demonstrates classic intersection of cardiac rehab with psychiatric comorbidity. SSRIs interacting with antiplatelet therapy.</div>
+            <div class="case-tags">
+              <div class="case-tag">Cardiology</div>
+              <div class="case-tag">Post-MI</div>
+              <div class="case-tag">Depression</div>
+              <div class="case-tag">Drug Interaction</div>
+            </div>
+            <div class="case-footer">
+              <div class="case-difficulty medium">🟡 Medium</div>
+              <div>📊 18 data points</div>
+              <div>🎓 621 students</div>
+              <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;margin-left:auto">Study →</button>
+            </div>
+          </div>
+
+          <div class="case-card" style="--case-color:#a78bfa">
+            <div class="case-anon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Patient ID: CGNV-0748 · 28F · Anonymized
+            </div>
+            <div class="case-title">New-Onset Epilepsy Diagnosis in Young Adult</div>
+            <div class="case-desc">28-year-old female presenting with tonic-clonic seizures. EEG findings, MRI interpretation, and first-line AED selection. Explore teratogenicity concerns given reproductive age.</div>
+            <div class="case-tags">
+              <div class="case-tag">Neurology</div>
+              <div class="case-tag">Epilepsy</div>
+              <div class="case-tag">AED</div>
+              <div class="case-tag">EEG</div>
+            </div>
+            <div class="case-footer">
+              <div class="case-difficulty medium">🟡 Medium</div>
+              <div>📊 31 data points</div>
+              <div>🎓 504 students</div>
+              <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;margin-left:auto">Study →</button>
+            </div>
+          </div>
+
+          <div class="case-card" style="--case-color:#ffb347">
+            <div class="case-anon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Patient ID: CGNV-1822 · 71M · Anonymized
+            </div>
+            <div class="case-title">COPD Exacerbation with Cor Pulmonale</div>
+            <div class="case-desc">Elderly male with 40 pack-year history. ABG analysis, NIV initiation, and management of right heart failure secondary to chronic hypoxia. ICU-level complexity.</div>
+            <div class="case-tags">
+              <div class="case-tag">COPD</div>
+              <div class="case-tag">Pulmonology</div>
+              <div class="case-tag">Cor Pulmonale</div>
+              <div class="case-tag">ABG</div>
+            </div>
+            <div class="case-footer">
+              <div class="case-difficulty hard">🔴 Hard</div>
+              <div>📊 40 data points</div>
+              <div>🎓 391 students</div>
+              <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;margin-left:auto">Study →</button>
+            </div>
+          </div>
+
+          <div class="case-card" style="--case-color:#00d4aa">
+            <div class="case-anon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              Patient ID: CGNV-5091 · 19M · Anonymized
+            </div>
+            <div class="case-title">Type 1 Diabetes — DKA Presentation</div>
+            <div class="case-desc">Newly diagnosed T1DM in a college student. Classic DKA presentation — management of fluids, insulin protocol, electrolytes, and patient education for long-term self-management.</div>
+            <div class="case-tags">
+              <div class="case-tag">T1 Diabetes</div>
+              <div class="case-tag">DKA</div>
+              <div class="case-tag">Emergency</div>
+              <div class="case-tag">Adolescent</div>
+            </div>
+            <div class="case-footer">
+              <div class="case-difficulty easy">🟢 Easy</div>
+              <div>📊 15 data points</div>
+              <div>🎓 1,204 students</div>
+              <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;margin-left:auto">Study →</button>
+            </div>
+          </div>
+
+          <div class="case-card" style="--case-color:#ff5c8a;cursor:default;opacity:.7">
+            <div style="font-size:28px;text-align:center;padding:20px 0">🔒</div>
+            <div class="case-title" style="text-align:center">48 More Cases</div>
+            <div class="case-desc" style="text-align:center">Unlock full student access to study all real-world anonymized cases with AI-guided explanations.</div>
+            <button class="btn btn-primary" style="margin:16px auto 0;display:flex">Upgrade to Student Pro</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════ EMERGENCY ════ -->
+      <div class="section" id="emergency">
+        <div>
+          <div class="section-title">Emergency Services</div>
+          <div class="section-sub">Immediate access to hospitals and emergency numbers near you</div>
+        </div>
+
+        <div class="emergency-hero">
+          <div class="emergency-title">🚨 Need Emergency Help?</div>
+          <div class="emergency-sub">One tap to find the nearest hospital. Second tap to call emergency services.</div>
+          <div class="emergency-btns">
+            <button class="emg-btn emg-btn-blue" onclick="findNearbyHospitals()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Find Hospitals Nearby
+            </button>
+            <button class="emg-btn emg-btn-red" onclick="callEmergency()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Call 112 — Emergency
+            </button>
+          </div>
+        </div>
+
+        <!-- Nearby hospitals -->
+        <div id="hospitalSection">
+          <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:14px">Hospitals Near You — New Delhi</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div class="hospital-card">
+              <div class="hospital-map-icon">🏥</div>
+              <div>
+                <div class="hospital-name">Apollo Hospital</div>
+                <div class="hospital-addr">Sarita Vihar, Mathura Rd, New Delhi</div>
+                <div style="font-size:12px;color:var(--teal);margin-top:3px;font-weight:600">🟢 Emergency Available · Open 24/7</div>
+              </div>
+              <div class="hospital-dist">2.4 km</div>
+              <div class="hospital-call" onclick="callHospital('Apollo Hospital','011-2692-6100')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Call Now
+              </div>
+            </div>
+
+            <div class="hospital-card">
+              <div class="hospital-map-icon">🏥</div>
+              <div>
+                <div class="hospital-name">Fortis Escorts Heart Institute</div>
+                <div class="hospital-addr">Okhla Road, New Delhi</div>
+                <div style="font-size:12px;color:var(--teal);margin-top:3px;font-weight:600">🟢 Cardiac Emergency · Open 24/7</div>
+              </div>
+              <div class="hospital-dist">3.8 km</div>
+              <div class="hospital-call" onclick="callHospital('Fortis Escorts','011-4713-5000')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Call Now
+              </div>
+            </div>
+
+            <div class="hospital-card">
+              <div class="hospital-map-icon">🏥</div>
+              <div>
+                <div class="hospital-name">AIIMS — All India Institute of Medical Sciences</div>
+                <div class="hospital-addr">Sri Aurobindo Marg, Ansari Nagar</div>
+                <div style="font-size:12px;color:var(--amber);margin-top:3px;font-weight:600">🟡 May have wait times · Open 24/7</div>
+              </div>
+              <div class="hospital-dist">5.1 km</div>
+              <div class="hospital-call" onclick="callHospital('AIIMS Emergency','011-2659-3308')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Call Now
+              </div>
+            </div>
+
+            <div class="hospital-card">
+              <div class="hospital-map-icon">🏥</div>
+              <div>
+                <div class="hospital-name">Max Super Speciality Hospital</div>
+                <div class="hospital-addr">Press Enclave Marg, Saket, New Delhi</div>
+                <div style="font-size:12px;color:var(--teal);margin-top:3px;font-weight:600">🟢 All Specialities · Open 24/7</div>
+              </div>
+              <div class="hospital-dist">6.3 km</div>
+              <div class="hospital-call" onclick="callHospital('Max Saket','011-2651-5050')">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Call Now
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Emergency numbers -->
+          <div class="card" style="margin-top:16px;background:rgba(255,45,85,.05);border-color:rgba(255,45,85,.2)">
+            <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:14px;color:var(--rose)">🚑 National Emergency Numbers</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+              <div style="padding:14px;background:var(--surface2);border-radius:12px;text-align:center;cursor:pointer" onclick="window.location.href='tel:112'">
+                <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--rose)">112</div>
+                <div style="font-size:12px;color:var(--text3);margin-top:4px">National Emergency</div>
+              </div>
+              <div style="padding:14px;background:var(--surface2);border-radius:12px;text-align:center;cursor:pointer" onclick="window.location.href='tel:102'">
+                <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--blue2)">102</div>
+                <div style="font-size:12px;color:var(--text3);margin-top:4px">Ambulance</div>
+              </div>
+              <div style="padding:14px;background:var(--surface2);border-radius:12px;text-align:center;cursor:pointer" onclick="window.location.href='tel:108'">
+                <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--teal)">108</div>
+                <div style="font-size:12px;color:var(--text3);margin-top:4px">Medical Helpline</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app-shell -->
+
+<!-- ════ ADD REMINDER MODAL ════ -->
+<div class="modal-overlay" id="addReminderModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="modal-close" onclick="document.getElementById('addReminderModal').classList.remove('open')">✕</div>
+    <div class="modal-title">Add New Reminder</div>
+    <div class="form-group">
+      <label class="form-label">Reminder Type</label>
+      <select class="form-input">
+        <option>💊 Medication</option>
+        <option>👨‍⚕️ Doctor Appointment</option>
+        <option>🧪 Lab Test</option>
+        <option>🧘 Wellness Activity</option>
+        <option>🏃 Exercise</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Label</label>
+      <input class="form-input" placeholder="e.g. Metformin 500mg">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Time</label>
+        <input class="form-input" type="time" value="09:00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes (optional)</label>
+      <input class="form-input" placeholder="e.g. Take after meal">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="document.getElementById('addReminderModal').classList.remove('open')">Save Reminder</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('addReminderModal').classList.remove('open')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CALL MODAL ════ -->
+<div class="modal-overlay" id="callModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="text-align:center;max-width:380px">
+    <div class="modal-close" onclick="document.getElementById('callModal').classList.remove('open')">✕</div>
+    <div style="font-size:52px;margin-bottom:16px">📞</div>
+    <div class="modal-title" id="callModalTitle" style="text-align:center">Calling Emergency</div>
+    <div id="callModalNum" style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--rose);margin:12px 0">112</div>
+    <div style="font-size:14px;color:var(--text3);margin-bottom:24px">Tap the button below to initiate call</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="emg-btn emg-btn-red" id="callNowBtn" style="min-width:140px;padding:16px 24px" onclick="initiateCall()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call Now
+      </button>
+      <button class="btn btn-ghost" onclick="document.getElementById('callModal').classList.remove('open')" style="padding:16px 24px">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── NAVIGATION ──
+  function showSection(id, navEl) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const sec = document.getElementById(id);
+    if (sec) sec.classList.add('active');
+    if (navEl) navEl.classList.add('active');
+  }
+
+  // Emergency nav item click fix
+  document.querySelector('.nav-emergency').addEventListener('click', () => {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('emergency').classList.add('active');
+  });
+
+  // ── AI CHAT ──
+  const responses = [
+    "Based on your health profile, I recommend monitoring this symptom for 48 hours. If it persists, please consult Dr. Sharma as soon as possible.",
+    "I've analyzed your recent lab reports. Your values are within acceptable ranges, but your LDL cholesterol is borderline. Consider reducing saturated fat intake.",
+    "Your medication schedule looks good. However, I notice you've been missing your evening dose on weekends. Consistency is crucial for hypertension management.",
+    "That's a great question! Based on current medical literature and your profile, I'd suggest a Mediterranean diet approach — it's particularly effective for cardiovascular health.",
+    "I can see your glucose levels have been more stable this week — great progress! Keep maintaining the low-carb dinner approach we discussed.",
+  ];
+  let rIdx = 0;
+
+  function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const val = input.value.trim();
+    if (!val) return;
+    addMsg(val, 'user');
+    input.value = '';
+    setTimeout(() => addMsg(responses[rIdx++ % responses.length], 'ai'), 900);
+  }
+
+  function sendChip(text) {
+    addMsg(text, 'user');
+    setTimeout(() => addMsg(responses[rIdx++ % responses.length], 'ai'), 900);
+  }
+
+  function addMsg(text, role) {
+    const msgs = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.innerHTML = `<div class="msg-icon">${role==='ai'?'🤖':'👤'}</div><div class="msg-bubble">${text}</div>`;
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  // ── PLAN TASKS ──
+  function toggleTask(el) {
+    const check = el.querySelector('.plan-task-check');
+    const label = el.querySelector('.plan-task-label');
+    if (check.classList.contains('done')) {
+      check.classList.remove('done');
+      check.textContent = '';
+      label.classList.remove('done');
+    } else {
+      check.classList.add('done');
+      check.textContent = '✓';
+      label.classList.add('done');
+    }
+  }
+
+  // ── EMERGENCY ──
+  let currentCallNum = '112';
+
+  function findNearbyHospitals() {
+    document.getElementById('hospitalSection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function callEmergency() {
+    currentCallNum = '112';
+    document.getElementById('callModalTitle').textContent = 'National Emergency';
+    document.getElementById('callModalNum').textContent = '112';
+    document.getElementById('callModal').classList.add('open');
+  }
+
+  function callHospital(name, num) {
+    currentCallNum = num;
+    document.getElementById('callModalTitle').textContent = name;
+    document.getElementById('callModalNum').textContent = num;
+    document.getElementById('callModal').classList.add('open');
+  }
+
+  function initiateCall() {
+    window.location.href = `tel:${currentCallNum.replace(/[^0-9+]/g,'')}`;
+    document.getElementById('callModal').classList.remove('open');
+  }
+
+  // ── FILE UPLOAD ──
+  function triggerFileUpload() {
+    document.getElementById('fileInput').click();
+  }
+
+  function handleFileUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const scanDrop = document.querySelector('.scan-drop');
+    scanDrop.innerHTML = `
+      <div class="scan-drop-icon">✅</div>
+      <h3>${file.name}</h3>
+      <p>AI is analyzing your report…</p>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px;max-width:300px;margin:20px auto 0">
+        <div style="padding:10px 16px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);border-radius:10px;font-size:13px;color:var(--teal)">✅ File uploaded successfully</div>
+        <div style="padding:10px 16px;background:rgba(59,140,255,.08);border:1px solid rgba(59,140,255,.2);border-radius:10px;font-size:13px;color:var(--blue2)">🤖 AI scanning in progress…</div>
+      </div>
+    `;
+  }
+</script>
+</body>
+</html>
